@@ -44,8 +44,8 @@ else:
     df_despesas.to_json(os.path.join(dir_despesas, 'df_despesas.json'))
     
     # Exporta o dataFrame receitas/despesas para .SQL
-    df_receitas.to_sql(os.path.join(dir_receitas, 'df_receitas.sql'))
-    df_despesas.to_sql(os.path.join(dir_despesas, 'df_despesas.sql'))  
+    # df_receitas.to_sql(os.path.join(dir_receitas, 'df_receitas.sql'))
+    # df_despesas.to_sql(os.path.join(dir_despesas, 'df_despesas.sql'))  
 
 # Se o arquivo de categorias já existir, faz a leitura.
 if ('df_cat_receita.csv' in os.listdir('data') and ('df_cat_despesa.csv' in os.listdir('data'))):
@@ -73,5 +73,5 @@ else:
     df_cat_despesa.to_json(os.path.join(dir_cat_despesa, 'df_cat_despesa.json'))
     
     # Exporta o dataFrame de categorias para .SQL
-    df_cat_receita.to_sql(os.path.join(dir_cat_receita, 'df_cat_receita.sql'))
-    df_cat_despesa.to_sql(os.path.join(dir_cat_despesa, 'df_cat_despesa.sql')) 
+    # df_cat_receita.to_sql(os.path.join(dir_cat_receita, 'df_cat_receita.sql'))
+    # df_cat_despesa.to_sql(os.path.join(dir_cat_despesa, 'df_cat_despesa.sql')) 
