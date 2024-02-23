@@ -7,11 +7,11 @@ if ('df_receitas.csv' in os.listdir('data')) and ('df_despesas.csv' in os.listdi
     df_receitas = pd.read_csv('data/df_receitas.csv', index_col=0, parse_dates=True)
     df_despesas = pd.read_csv('data/df_despesas.csv', index_col=0, parse_dates=True)
     
-    df_despesas["Data"] = pd.to_datetime(df_despesas["Data"])
     df_receitas["Data"] = pd.to_datetime(df_receitas["Data"])
+    df_despesas["Data"] = pd.to_datetime(df_despesas["Data"])
     
-    df_despesas["Data"] = df_despesas["Data"].apply(lambda x: x.date())
     df_receitas["Data"] = df_receitas["Data"].apply(lambda x: x.date())
+    df_despesas["Data"] = df_despesas["Data"].apply(lambda x: x.date())
 
 else:
     data_structure = {'Valor':[],
