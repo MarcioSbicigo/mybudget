@@ -10,6 +10,8 @@ import plotly.express as px
 import numpy as np
 import pandas as pd
 
+from globals import *
+
 # ========= Layout ========= #
 layout = dbc.Col([
                 html.H1("MyBudget", className='text-primary'),
@@ -66,8 +68,7 @@ layout = dbc.Col([
 
                             dbc.Col([
                                 html.Label("Categoria da receita"),
-                                # dbc.Select(id="select_receita", options=[{"label": i, "value": i} for i in cat_receita], value=cat_receita[0])
-                                dbc.Select(id="select_receita", options=[], value=[])
+                                dbc.Select(id="select_receita", options=[{'label': i, 'value': i} for i in cat_receita], value=cat_receita[0])
                             ], width=4)
                             
                         ], style={"margin-top": "25px"}),
@@ -159,8 +160,7 @@ layout = dbc.Col([
 
                             dbc.Col([
                                 html.Label("Categoria da despesa"),
-                                # dbc.Select(id="select_despesa", options=[{"label": i, "value": i} for i in cat_despesa], value=cat_despesa[0])
-                                dbc.Select(id="select_despesa", options=[], value=[])
+                                dbc.Select(id="select_despesa", options=[{'label': i, 'value': i} for i in cat_despesa], value=cat_despesa[0])
                             ], width=4)
                             
                         ], style={"margin-top": "25px"}),

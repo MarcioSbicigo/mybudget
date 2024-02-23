@@ -6,18 +6,18 @@ import pandas as pd
 import plotly.express as px
 
 from app import *
+from globals import *
 from components import dashboards, extratos, sidebar
-
-
 
 # =========  Layout  =========== #
 content = html.Div(id="page-content")
 
 app.layout = dbc.Container(children=[
-    # dcc.Store(id='store-receitas', data=df_receitas_aux),
-    # dcc.Store(id="store-despesas", data=df_despesas_aux),
-    # dcc.Store(id='stored-cat-receitas', data=list_receitas_aux),
-    # dcc.Store(id='stored-cat-despesas', data=list_despesas_aux),
+    dcc.Store(id='store-receitas', data=df_receitas.to_dict()),
+    dcc.Store(id='store-despesas', data=df_despesas.to_dict()),
+    dcc.Store(id='stored-cat-receitas', data=df_cat_receita.to_dict()),
+    dcc.Store(id='stored-cat-despesas', data=df_cat_despesa.to_dict()),
+    
     
     dbc.Row([
         dbc.Col([
