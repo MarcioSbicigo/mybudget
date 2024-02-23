@@ -1,6 +1,8 @@
 import pandas as pd
 import os
 
+if('data' not in os.listdir()): os.mkdir('data')
+
 if ('df_receitas.csv' in os.listdir('data')) and ('df_despesas.csv' in os.listdir('data')):
     df_receitas = pd.read_csv('data/df_receitas.csv', index_col=0, parse_dates=True)
     df_despesas = pd.read_csv('data/df_despesas.csv', index_col=0, parse_dates=True)
