@@ -37,7 +37,7 @@ if ("df_cat_receita.csv" in os.listdir('data')) and ("df_cat_despesa.csv" in os.
 
 else:    
     cat_receita = {'Categoria': ["Salário", "Investimentos", "Vendas", "Cashback"]}
-    cat_despesa = {'Categoria': ["Alimentação", "Aluguel", "Água", "Luz", "Gasolina", "Saúde", "Lazer"]}
+    cat_despesa = {'Categoria': ["Alimentação", "Aluguel", "Água", "Luz", "Combustível", "Saúde", "Lazer"]}
     
     df_cat_receita = pd.DataFrame(cat_receita, columns=['Categoria'])
     df_cat_despesa = pd.DataFrame(cat_despesa, columns=['Categoria'])
