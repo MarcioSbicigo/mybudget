@@ -64,14 +64,14 @@ def imprimir_tabela (data):
         ],
 
         data=df.to_dict('records'),
-        filter_action="native",    
-        sort_action="native",       
-        sort_mode="single",  
-        selected_columns=[],        
-        selected_rows=[],          
-        page_action="native",      
-        page_current=0,             
-        page_size=10,                        
+        filter_action="native",
+        sort_action="native",
+        sort_mode="single",
+        selected_columns=[],
+        selected_rows=[],
+        page_action="native",
+        page_current=0,           
+        page_size=10                       
     ),
 
     return tabela
