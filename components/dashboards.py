@@ -101,8 +101,8 @@ layout = dbc.Col([
                     dcc.DatePickerRange(
                         month_format='Do MMM, YY',
                         end_date_placeholder_text='Data...',
-                        start_date=datetime.today(),
-                        end_date=datetime.today() + timedelta(days=31),
+                        start_date=datetime.today() + timedelta(days=-15),
+                        end_date=datetime.today(),
                         with_portal=True,
                         updatemode='singledate',
                         id='date-picker-config',
