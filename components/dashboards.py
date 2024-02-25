@@ -18,23 +18,11 @@ card_icon = {
     'margin': 'auto'
 }
 
+graph_margin = dict(l=25, r=25, t=25, b=0)
+
 # =========  Layout  =========== #
 layout = dbc.Col([
     dbc.Row([
-        
-        # Saldo Total
-        dbc.Col([
-                dbc.CardGroup([
-                        dbc.Card([
-                                html.Legend("Saldo"),
-                                html.H5("R$ -", id="p-saldo-dashboards", style={}),
-                        ], style={"padding-left": "20px", "padding-top": "10px"}),
-                        dbc.Card(
-                            html.Div(className="fa fa-university", style=card_icon), 
-                            color="warning",
-                            style={"maxWidth": 75, "height": 100, "margin-left": "-10px"},
-                        )])
-                ], width=4),
 
         # Receita
         dbc.Col([
@@ -63,6 +51,20 @@ layout = dbc.Col([
                     style={"maxWidth": 75, "height": 100, "margin-left": "-10px"},
                 )])
             ], width=4),
+        
+        # Saldo Total
+        dbc.Col([
+                dbc.CardGroup([
+                        dbc.Card([
+                                html.Legend("Saldo"),
+                                html.H5("R$ -", id="p-saldo-dashboards", style={}),
+                        ], style={"padding-left": "20px", "padding-top": "10px"}),
+                        dbc.Card(
+                            html.Div(className="fa fa-university", style=card_icon), 
+                            color="warning",
+                            style={"maxWidth": 75, "height": 100, "margin-left": "-10px"},
+                        )])
+                ], width=4)
     ], style={"margin": "10px"}),
     
     #Seção FILTRAR LANÇLAMENTOS
@@ -184,10 +186,93 @@ def saldo_total(despesas, receitas):
 
     return f"R$ {valor}"
 
-# Gráfico 1
+#  Gráfico 1
+@app.callback(
+    
+    Output('graph1', 'figure'),
+    
+    [
+        Input('store-despesas', 'data'),
+        Input('store-receitas', 'data'),
+        Input("dropdown-despesa", "value"),
+        Input("dropdown-receita", "value")
+        # Input(ThemeChangerAIO.ids.radio("theme"), "value")
+    ]
+)
+def update_output(data_despesa, data_receita, despesa, receita):
+    df_despesas = pd.DataFrame(data_despesa).set_index('Data')[['Valor']]
+    df_ds = df_despesas.groupby('Data').sum().rename(columns={'Valor': 'Despesa'})
+    
+    df_receita = pd.DataFrame(data_receita).set_index('Data')[['Valor']]
+    df_rc = df_receita.groupby('Data').sum().rename(columns={'Valor': 'Receita'})
+    
+    df_acum = df_ds.join(df_rc, how='outer').fillna(0)
+    df_acum['Acum'] = df_acum['Receita'] - df_acum['Despesa']
+    df_acum['Acum'] = df_acum['Acum'].cumsum()
+    
+    # Montando o gráfico
+    
+    fig = go.Figure()
+    fig.add_trace(go.Scatter(name='Fluxo de caixa', x=df_acum.index, y=df_acum['Acum'], mode='lines'))
+    
+    
+    fig.update_layout(margin=graph_margin, height=375)
+    fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+    
+    return fig
 
-# Gráfico 2
+#  Gráfico 2
+@app.callback(
+    
+    Output('graph2', 'figure'),
+    
+    [
+        Input('store-receitas', 'data'),
+        Input('store-despesas', 'data'),
+        Input('dropdown-receita', 'value'),
+        Input('dropdown-despesa', 'value'),
+        Input('date-picker-config', 'start_date'),
+        Input('date-picker-config', 'end_date')
+        #Input(ThemeChangerAIO.ids.radio("theme"), "value")
+    ]   
+)
+def graph2_show(data_receita, data_despesa, receita, despesa, start_date, end_date):
+    df_rc = pd.DataFrame(data_receita)
+    df_ds = pd.DataFrame(data_despesa)
+    
+    df_rc['Output'] = 'Receitas'
+    df_ds['Output'] = 'Despesas'
+    
+    df_final = pd.concat([df_ds, df_rc])
+    df_final['Data'] = pd.to_datetime(df_final['Data'])
+    
+    start_date = pd.to_datetime(start_date)
+    end_date = pd.to_datetime(end_date)
+    
+    df_final = df_final[(df_final['Data'] >= start_date) & (df_final['Data'] <= end_date)]
+    df_final = df_final[(df_final['Categoria'].isin(receita) | (df_final['Categoria'].isin(despesa)))]
+    
+    fig = px.bar(df_final, x="Data", y="Valor", color='Output', barmode="group")
+    
+    fig.update_layout(margin=graph_margin, height=350)
+    fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
+    
+    return fig
 
-# Gráfico 3
+#  Gráfico 3
+# @app.callback(
+    
+# )
+# def pie_receita():
+    
+    
+#     return fig
 
-# Gráfico 4
+#  Gráfico 4
+# @app.callback(
+    
+# )
+# def pie_despesa():
+    
+    
+#     return fig
