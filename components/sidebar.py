@@ -286,28 +286,26 @@ def save_form_receita(n, descricao, valor, date, switches, categoria, dict_recei
     Input("salvar_despesa", "n_clicks"),
 
     [
+        State("txt-despesa", "value"),
         State("valor_despesa", "value"),
+        State("date-despesas", "date"),
         State("switches-input-despesa", "value"),
         State("select_despesa", "value"),
-        State("date-despesas", "date"),
-        State("txt-despesa", "value"),
         State('store-despesas', 'data')
-    ])
-def save_form_despesa(n, valor, switches, descricao, date, txt, dict_despesas):
+    ]
+)
+def save_form_despesa(n, descricao, valor, date, switches, categoria, dict_despesas):
     df_despesas = pd.DataFrame(dict_despesas)
 
     if n and not(valor == "" or valor== None):
-        valor = round(valor, 2)
+        valor = round(float(valor), 2)
         date = pd.to_datetime(date).date()
         categoria = categoria[0] if type(categoria) == list else categoria
 
         recebido = 1 if 1 in switches else 0
         fixo = 0 if 2 in switches else 0
-        
-        if descricao == None or descricao == "":
-            descricao = 0
 
-        df_despesas.loc[df_despesas.shape[0]] = [valor, recebido, fixo, date, descricao, txt]
+        df_despesas.loc[df_despesas.shape[0]] = [valor, recebido, fixo, date, categoria, descricao]
         df_despesas.to_csv("data/df_despesas.csv")
 
     data_return = df_despesas.to_dict()
