@@ -12,7 +12,7 @@ class MyBudgetDatabase:
     def insert_log(self, event, collection):
         app_log = self.db[collection]
         datetime_log = datetime.datetime.now()
-        log = {'evento': event, 'timestamp': datetime_log}
+        log = {'Evento': event, 'timestamp': datetime_log}
         app_log.insert_one(log)
         
     def load_categories(self, collection):
@@ -57,7 +57,7 @@ class MyBudgetDatabase:
                 
                 data = data[data['Descrição'] != '*transacao-inicial*']
             
-            self.insert_log(f'Dados de {collection} carregados.')
+            self.insert_log(f'Dados de {collection} carregados.', 'log_aplicacao')
         return data
             
     def insert_data(self, collection, valor, recebido, fixo, date, categoria, descricao):

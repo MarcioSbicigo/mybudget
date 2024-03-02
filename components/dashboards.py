@@ -8,7 +8,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 #import calendar
 
-from mybudgetDB import *
+from myBudgetDB import *
 from app import app
 
 # Definindo card_icon para padronizar o estilo dos cards 

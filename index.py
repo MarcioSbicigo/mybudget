@@ -7,7 +7,7 @@ import pandas as pd
 import plotly.express as px
 
 from app import *
-from mybudgetDB import *
+from myBudgetDB import *
 from components import dashboards, extratos, sidebar
 
 my_budget_db = MyBudgetDatabase()
@@ -39,7 +39,6 @@ app.layout = dbc.Container(children=[
 
 ], fluid=True, style={"padding": "0px"}, className="dbc")
 
-
 @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
 def render_page_content(pathname):
     if pathname == "/" or pathname == "/dashboards":
@@ -47,7 +46,9 @@ def render_page_content(pathname):
 
     if pathname == "/extratos":
         return extratos.layout
-        
+
+if __name__ == '__main__':
+    app.run_server(debug=True)
 
 if __name__ == '__main__':
     #app.run_server(host='0.0.0.0', debug=True)

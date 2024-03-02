@@ -10,27 +10,11 @@ import plotly.express as px
 import numpy as np
 import pandas as pd
 
-from mybudgetDB import *
+from myBudgetDB import *
 
-# URL do banco de dados MongoDb
-mongo_url = 'mongodb://localhost:27017/'
-
-# Definindo logs
-def insereLog(evento, collection):
-    # Conectando ao MongoDB
-    client = MongoClient(mongo_url)
-    db = client['myBudget']
-    
-    app_log = db[collection]
-
-    datetime_log = datetime.datetime.now()
-    
-    log = {
-        'evento': evento,
-        'timestamp': datetime_log
-    }
-    
-    app_log.insert_one(log)
+# my_budget_db = MyBudgetDatabase()
+# df_despesas = my_budget_db.load_data("despesas")
+# df_receitas = my_budget_db.load_data("receitas")
 
 my_budget_db = MyBudgetDatabase()
 
@@ -273,6 +257,7 @@ def toggle_modal(n1, is_open):
         return not is_open
 
 # Enviar Form receita
+
 @app.callback(
     Output('store-receitas', 'data'),
 
@@ -299,9 +284,9 @@ def save_form_receita(n, descricao, valor, date, switches, categoria, dict_recei
         
         my_budget_db.insert_data('receitas', valor, recebido, fixo, date, categoria, descricao)
         
-        df_receitas = my_budget_db.load_data("receitas")
+        df_receitas = my_budget_db.load_data("receitas").to_dict()
         
-        return df_receitas.to_dict()
+        return df_receitas
     
     return dict_receitas
 
@@ -321,7 +306,7 @@ def save_form_receita(n, descricao, valor, date, switches, categoria, dict_recei
     ]
 )
 def save_form_despesa(n, descricao, valor, date, switches, categoria, dict_despesas):
-
+    
     if n and not(valor == "" or valor == None):
         valor = round(float(valor), 2)
         date = pd.to_datetime(date)
@@ -332,9 +317,9 @@ def save_form_despesa(n, descricao, valor, date, switches, categoria, dict_despe
         
         my_budget_db.insert_data('despesas', valor, recebido, fixo, date, categoria, descricao)
         
-        df_despesas = my_budget_db.load_data("despesas")
+        df_despesas = my_budget_db.load_data("despesas").to_dict()
         
-        return df_despesas.to_dict()
+        return df_despesas
 
     return dict_despesas
 
