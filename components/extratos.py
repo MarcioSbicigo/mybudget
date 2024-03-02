@@ -10,12 +10,10 @@ import pandas as pd
 
 from app import app
 
+graph_margin = dict(l=25, r=25, t=25, b=0)
+
 # =========  Layout  =========== #
 layout = dbc.Col([
-    dbc.Row([
-        html.Legend('Tabela de Despesas'),
-        html.Div(id='tabela-despesas', className='dbc')
-    ]),
     
     dbc.Row([
         dbc.Col([
@@ -31,7 +29,12 @@ layout = dbc.Col([
                 ], style={'text-alighn': 'center', 'padding-top': '30px'})
             )
         ], width=3)
-    ])
+    ]), 
+    dbc.Row([
+        html.Legend('Tabela de Despesas'),
+        html.Div(id='tabela-despesas', className='dbc')
+    ]),
+    
 ], style={'padding': '10px'})
 
 # =========  Callbacks  =========== #
@@ -51,16 +54,18 @@ def imprimir_tabela (data):
     df.loc[df['Fixo'] == 1, 'Fixo'] = 'Sim'
 
     df = df.fillna('-')
+    
+    df['Data'] = pd.to_datetime(df['Data']).dt.strftime('%d-%m-%Y')
 
-    df.sort_values(by='Data', ascending=False)
-
+    df.sort_values(by='Data', ascending=True)
+    
+    ordem_colunas = ['Descrição', 'Categoria', 'Data', 'Valor', 'Recebido', 'Fixo']
+    
     tabela = dash_table.DataTable(
         id='datatable-interactivity',
+        
         columns=[
-            {"name": i, "id": i, "deletable": False, "selectable": False, "hideable": True}
-            if i == "Descrição" or i == "Fixo" or i == "Recebido"
-            else {"name": i, "id": i, "deletable": False, "selectable": False}
-            for i in df.columns
+            {"name": i, "id": i, "deletable": False, "selectable": False, "hideable": True} for i in ordem_colunas
         ],
 
         data=df.to_dict('records'),
@@ -90,6 +95,7 @@ def bar_chart(data):
     graph = px.bar(df_grouped, x='Categoria', y='Valor', title="Despesas Gerais")
     
     #graph.update_layout(template=template_from_url(theme))
+    graph.update_layout(margin=graph_margin, height=410)
     graph.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
     
     return graph
