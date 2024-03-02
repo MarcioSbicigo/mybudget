@@ -21,6 +21,15 @@ card_icon = {
 
 graph_margin = dict(l=25, r=25, t=25, b=0)
 
+# Obtém o primeiro dia do mês atual
+start_date = datetime.datetime(datetime.datetime.today().year, datetime.datetime.today().month, 1)
+
+# Obtém o último dia do mês atual
+if datetime.datetime.now().month == 12:
+    end_date = datetime.datetime(datetime.datetime.now().year + 1, 1, 1) - timedelta(days=1)
+else:
+    end_date = datetime.datetime(datetime.datetime.now().year, datetime.datetime.now().month + 1, 1) - timedelta(days=1)
+
 # =========  Layout  =========== #
 layout = dbc.Col([
     dbc.Row([
@@ -102,14 +111,14 @@ layout = dbc.Col([
                     dcc.DatePickerRange(
                         month_format='Do MMM, YY',
                         end_date_placeholder_text='Data...',
-                        #start_date=datetime.today() + timedelta(days=-15),
-                        start_date=(datetime.datetime.today() + timedelta(days=-15)).date(),
-                        #end_date=datetime.today(),
-                        end_date=datetime.datetime.today(),
+                        start_date=start_date,
+                        end_date=end_date,
+                        display_format='DD-MM-YYYY',
                         with_portal=True,
                         updatemode='singledate',
                         id='date-picker-config',
                         style={'z-index': '100'})
+                    #start_date = datetime(data_atual.year, data_atual.month, 1)
                     
             ], style={"height": "100%", "padding": "20px"}),
                 
