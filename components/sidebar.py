@@ -10,12 +10,39 @@ import plotly.express as px
 import numpy as np
 import pandas as pd
 
-from globals import *
+from mybudgetDB import *
+
+# URL do banco de dados MongoDb
+mongo_url = 'mongodb://localhost:27017/'
+
+# Definindo logs
+def insereLog(evento, collection):
+    # Conectando ao MongoDB
+    client = MongoClient(mongo_url)
+    db = client['myBudget']
+    
+    app_log = db[collection]
+
+    datetime_log = datetime.datetime.now()
+    
+    log = {
+        'evento': evento,
+        'timestamp': datetime_log
+    }
+    
+    app_log.insert_one(log)
+
+my_budget_db = MyBudgetDatabase()
+
+cat_receita = my_budget_db.load_categories("categorias_receita")
+cat_receita = cat_receita['nome'].tolist()
+
+cat_despesa = my_budget_db.load_categories("categorias_despesa")
+cat_despesa = cat_despesa['nome'].tolist()
 
 # ========= Layout ========= #
 layout = dbc.Col([
-                html.H1("MyBudget", className='text-primary'),
-                html.P("by ASIMOV", className='text-info'),
+                html.H2("Minhas Finanças", className='text-primary'),
                 html.Hr(),
     
     # Seção de Perfil
@@ -50,7 +77,7 @@ layout = dbc.Col([
                                 dcc.DatePickerSingle(id='date-receitas',
                                     min_date_allowed=date(2020, 1, 1),
                                     max_date_allowed=date(2030, 12, 31),
-                                    date=datetime.today(),
+                                    date=datetime.datetime.today(),
                                     style={"width": "100%"}
                                 ),
                             ], width=4),
@@ -141,7 +168,7 @@ layout = dbc.Col([
                                 dcc.DatePickerSingle(id='date-despesas',
                                     min_date_allowed=date(2020, 1, 1),
                                     max_date_allowed=date(2030, 12, 31),
-                                    date=datetime.today(),
+                                    date=datetime.datetime.today(),
                                     style={"width": "100%"}
                                 ),
                             ], width=4),
@@ -261,21 +288,22 @@ def toggle_modal(n1, is_open):
     ]
 )
 def save_form_receita(n, descricao, valor, date, switches, categoria, dict_receitas):
-    df_receitas = pd.DataFrame(dict_receitas)
-
-    if n and not(valor == "" or valor== None):
+    
+    if n and not(valor == "" or valor == None):
         valor = round(float(valor), 2)
-        date = pd.to_datetime(date).date()
+        date = pd.to_datetime(date)
         categoria = categoria[0] if type(categoria) == list else categoria
 
         recebido = 1 if 1 in switches else 0
         fixo = 0 if 2 in switches else 0
-
-        df_receitas.loc[df_receitas.shape[0]] = [valor, recebido, fixo, date, categoria, descricao]
-        df_receitas.to_csv("data/df_receitas.csv")
-
-    data_return = df_receitas.to_dict()
-    return data_return
+        
+        my_budget_db.insert_data('receitas', valor, recebido, fixo, date, categoria, descricao)
+        
+        df_receitas = my_budget_db.load_data("receitas")
+        
+        return df_receitas.to_dict()
+    
+    return dict_receitas
 
 # Enviar Form despesa
 @app.callback(
@@ -293,24 +321,24 @@ def save_form_receita(n, descricao, valor, date, switches, categoria, dict_recei
     ]
 )
 def save_form_despesa(n, descricao, valor, date, switches, categoria, dict_despesas):
-    df_despesas = pd.DataFrame(dict_despesas)
 
-    if n and not(valor == "" or valor== None):
+    if n and not(valor == "" or valor == None):
         valor = round(float(valor), 2)
-        date = pd.to_datetime(date).date()
+        date = pd.to_datetime(date)
         categoria = categoria[0] if type(categoria) == list else categoria
 
         recebido = 1 if 1 in switches else 0
         fixo = 0 if 2 in switches else 0
+        
+        my_budget_db.insert_data('despesas', valor, recebido, fixo, date, categoria, descricao)
+        
+        df_despesas = my_budget_db.load_data("despesas")
+        
+        return df_despesas.to_dict()
 
-        df_despesas.loc[df_despesas.shape[0]] = [valor, recebido, fixo, date, categoria, descricao]
-        df_despesas.to_csv("data/df_despesas.csv")
+    return dict_despesas
 
-    data_return = df_despesas.to_dict()
-    
-    return data_return 
-
-# Adicionar/excluir Receitas
+# Adicionar/excluir categorias Receitas
 @app.callback(
     [
         Output('select_receita', 'options'),
@@ -330,27 +358,33 @@ def save_form_despesa(n, descricao, valor, date, switches, categoria, dict_despe
         State('stored-cat-receitas', 'data')
     ]
 )
-def add_category(n, n2, txt, check_delete, data):
-    
-    cat_receita = list(data['Categoria'].values())
+def add_category_receita(n, n2, txt, check_delete, data):
+
+    cat_receita = my_budget_db.load_categories("categorias_receita")
+    cat_receita = cat_receita['nome'].tolist()
     
     if n and not (txt == '' or txt == None):
-        cat_receita = cat_receita + [txt] if txt not in cat_receita else cat_receita
+        if txt not in cat_receita:
+            my_budget_db.insert_category('categorias_receita', txt)
+            cat_receita.append(txt)
     
-    if n2:
-        if len(check_delete) > 0:
-            cat_receita = [i for i in cat_receita if i not in check_delete]
-    
+    if n2 and check_delete:
+        for categoria in check_delete:
+            if categoria in cat_receita:
+                my_budget_db.remove_category('categorias_receita', categoria)
+                
+                cat_receita.remove(categoria)
+                
+    #Atualizando opções para os componentes de saída    
     opt_receita = [{'label': i, 'value': i} for i in cat_receita]
     
     df_cat_receita = pd.DataFrame(cat_receita, columns=['Categoria'])
-    df_cat_receita.to_csv('data/df_cat_receita.csv')
     
     data_return = df_cat_receita.to_dict()
     
     return [opt_receita, opt_receita, [], data_return]
 
-# Adicionar/excluir Despesas
+# Adicionar/excluir categorias Despesas
 @app.callback(
     [
         Output('select_despesa', 'options'),
@@ -370,21 +404,27 @@ def add_category(n, n2, txt, check_delete, data):
         State('stored-cat-despesas', 'data')
     ]
 )
-def add_category(n, n2, txt, check_delete, data):
+def add_category_despesa(n, n2, txt, check_delete, data):
     
-    cat_despesa = list(data['Categoria'].values())
+    cat_despesa = my_budget_db.load_categories("categorias_despesa")
+    cat_despesa = cat_despesa['nome'].tolist()
     
     if n and not (txt == '' or txt == None):
-        cat_despesa = cat_despesa + [txt] if txt not in cat_despesa else cat_despesa
+        if txt not in cat_despesa:
+            my_budget_db.insert_category('categorias_despesa', txt)
+            cat_despesa.append(txt)
     
-    if n2:
-        if len(check_delete) > 0:
-            cat_despesa = [i for i in cat_despesa if i not in check_delete]
-    
+    if n2 and check_delete:
+        for categoria in check_delete:
+            if categoria in cat_despesa:
+                my_budget_db.remove_category('categorias_despesa', categoria)
+                
+                cat_despesa.remove(categoria)
+                
+    #Atualizando opções para os componentes de saída    
     opt_despesa = [{'label': i, 'value': i} for i in cat_despesa]
     
     df_cat_despesa = pd.DataFrame(cat_despesa, columns=['Categoria'])
-    df_cat_despesa.to_csv('data/df_cat_despesa.csv')
     
     data_return = df_cat_despesa.to_dict()
     

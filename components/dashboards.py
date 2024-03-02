@@ -1,13 +1,14 @@
 from dash import html, dcc
-from dash.dependencies import Input, Output, State
-from datetime import date, datetime, timedelta
+from dash.dependencies import Input, Output
+from datetime import datetime, timedelta
 import dash_bootstrap_components as dbc
 import pandas as pd
-import numpy as np
+#import numpy as np
 import plotly.express as px
 import plotly.graph_objects as go
-import calendar
-from globals import *
+#import calendar
+
+from mybudgetDB import *
 from app import app
 
 # Definindo card_icon para padronizar o estilo dos cards 
@@ -101,8 +102,10 @@ layout = dbc.Col([
                     dcc.DatePickerRange(
                         month_format='Do MMM, YY',
                         end_date_placeholder_text='Data...',
-                        start_date=datetime.today() + timedelta(days=-15),
-                        end_date=datetime.today(),
+                        #start_date=datetime.today() + timedelta(days=-15),
+                        start_date=(datetime.datetime.today() + timedelta(days=-15)).date(),
+                        #end_date=datetime.today(),
+                        end_date=datetime.datetime.today(),
                         with_portal=True,
                         updatemode='singledate',
                         id='date-picker-config',

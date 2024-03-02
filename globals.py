@@ -1,46 +1,84 @@
+import datetime
+from pymongo import MongoClient
 import pandas as pd
-import os
 
-if('data' not in os.listdir()): os.mkdir('data')
+# URL do banco de dados MongoDb
+mongo_url = 'mongodb://localhost:27017/'
 
-if ('df_receitas.csv' in os.listdir('data')) and ('df_despesas.csv' in os.listdir('data')):
-    df_receitas = pd.read_csv('data/df_receitas.csv', index_col=0, parse_dates=True)
-    df_despesas = pd.read_csv('data/df_despesas.csv', index_col=0, parse_dates=True)
-    
-    df_receitas["Data"] = pd.to_datetime(df_receitas["Data"])
-    df_despesas["Data"] = pd.to_datetime(df_despesas["Data"])
-    
-    df_receitas["Data"] = df_receitas["Data"].apply(lambda x: x.date())
-    df_despesas["Data"] = df_despesas["Data"].apply(lambda x: x.date())
+# Conectando ao MongoDB
+client = MongoClient(mongo_url)
+db = client['myBudget']
 
-else:
-    data_structure = {'Valor':[],
-        'Recebido':[],
-        'Fixo':[],
-        'Data':[],
-        'Categoria':[],
-        'Descrição':[],}
+# Definindo logs
+def insereLog(evento, collection):
+    app_log = db[collection]
 
-    df_receitas = pd.DataFrame(data_structure)
-    df_despesas = pd.DataFrame(data_structure)
+    datetime_log = datetime.datetime.now()
     
-    df_receitas.to_csv("data/df_receitas.csv")
-    df_despesas.to_csv("data/df_despesas.csv")
+    log = {
+        'evento': evento,
+        'timestamp': datetime_log
+    }
     
+    app_log.insert_one(log)
 
-if ("df_cat_receita.csv" in os.listdir('data')) and ("df_cat_despesa.csv" in os.listdir('data')):
-    df_cat_receita = pd.read_csv('data/df_cat_receita.csv', index_col=0)
-    df_cat_despesa = pd.read_csv('data/df_cat_despesa.csv', index_col=0)
-    
-    cat_receita = df_cat_receita.values.tolist()
-    cat_despesa = df_cat_despesa.values.tolist()
+# Buscando categorias de receitas e armazenando em um dataframe
+categorias_receitas = list(db['categorias_receitas'].find({}, {'_id': 0, 'nome': 1}))
+df_cat_receita = pd.DataFrame(categorias_receitas)
 
-else:    
-    cat_receita = {'Categoria': ["Salário", "Investimentos", "Vendas", "Cashback"]}
-    cat_despesa = {'Categoria': ["Alimentação", "Aluguel", "Água", "Luz", "Combustível", "Saúde", "Lazer"]}
+# Buscando categorias de despesas e armazenando em um dataframe
+categorias_despesas = list(db['categorias_despesas'].find({}, {'_id': 0, 'nome': 1}))
+df_cat_despesa = pd.DataFrame(categorias_despesas)
     
-    df_cat_receita = pd.DataFrame(cat_receita, columns=['Categoria'])
-    df_cat_despesa = pd.DataFrame(cat_despesa, columns=['Categoria'])
-    
-    df_cat_receita.to_csv("data/df_cat_receita.csv")
-    df_cat_despesa.to_csv("data/df_cat_despesa.csv")
+cat_receita = df_cat_receita.values.tolist()
+cat_despesa = df_cat_despesa.values.tolist()
+
+# Carrega as receitas do MongoDB
+try:
+    if 'receitas' in db.list_collection_names():
+        # Buscar os dados das coleções
+        cursor_receitas = db['receitas'].find({}, {'_id': 0})
+        #cursor_receitas = db['receitas'].find({'Data': {'$gte': '1900-01-02'}}, {'_id': 0})
+        
+        # Converter os dados em DataFrames
+        df_receitas = pd.DataFrame(list(cursor_receitas))
+        
+        # Converte a coluna 'Data' para datetime, assumindo que 'Data' é o nome da coluna
+        df_receitas['Data'] = pd.to_datetime(df_receitas['Data'])
+        
+        # Ajusta para manter apenas a data
+        df_receitas['Data'] = df_receitas['Data'].dt.date
+        
+        #df_receitas["Data"] = pd.to_datetime(df_receitas["Data"])
+        #df_receitas["Data"] = df_receitas["Data"].apply(lambda x: x.date())
+        
+        insereLog('Dados de receitas carregados.', 'log_aplicacao')
+except Exception as error:
+    print(f'ERRO: {error}')
+    insereLog(error, 'log_errors')
+
+# Carrega as despesas do MongoDB
+try:
+    if 'despesas' in db.list_collection_names():
+        # Buscar os dados das coleções
+        cursor_despesas = db['despesas'].find({}, {'_id': 0})
+        #cursor_despesas = db['despesas'].find({'Data': {'$gte': '1900-01-02'}}, {'_id': 0})
+        
+        # Converter os dados em DataFrames
+        df_despesas = pd.DataFrame(list(cursor_despesas))
+        
+        # Converte a coluna 'Data' para datetime, assumindo que 'Data' é o nome da coluna
+        df_despesas['Data'] = pd.to_datetime(df_despesas['Data'])
+        
+        # Ajusta para manter apenas a data
+        df_despesas['Data'] = df_despesas['Data'].dt.date
+        
+        #df_despesas["Data"] = pd.to_datetime(df_despesas["Data"])
+        #df_despesas["Data"] = df_despesas["Data"].apply(lambda x: x.date())
+        
+        insereLog('Dados de despesas carregados.', 'log_aplicacao')
+
+except Exception as error:
+    print(f'ERRO: {error}')
+    insereLog(error, 'log_errors')
+

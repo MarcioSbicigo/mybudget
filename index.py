@@ -7,8 +7,15 @@ import pandas as pd
 import plotly.express as px
 
 from app import *
-from globals import *
+from mybudgetDB import *
 from components import dashboards, extratos, sidebar
+
+my_budget_db = MyBudgetDatabase()
+
+df_receitas  = my_budget_db.load_data("receitas")
+df_despesas  = my_budget_db.load_data("despesas")
+cat_receitas = my_budget_db.load_categories("categorias_receita")
+cat_despesas = my_budget_db.load_categories("categorias_despesa")
 
 # =========  Layout  =========== #
 content = html.Div(id="page-content")
@@ -16,12 +23,11 @@ content = html.Div(id="page-content")
 app.layout = dbc.Container(children=[
     dcc.Store(id='store-receitas', data=df_receitas.to_dict()),
     dcc.Store(id='store-despesas', data=df_despesas.to_dict()),
-    dcc.Store(id='stored-cat-receitas', data=df_cat_receita.to_dict()),
-    dcc.Store(id='stored-cat-despesas', data=df_cat_despesa.to_dict()),
-    
+    dcc.Store(id='stored-cat-receitas', data=cat_receitas.to_dict()),
+    dcc.Store(id='stored-cat-despesas', data=cat_despesas.to_dict()),
     
     dbc.Row([
-        dbc.Col([
+        dbc.Col([   
             dcc.Location(id="url"),
             sidebar.layout
         ], md=2),
@@ -44,4 +50,5 @@ def render_page_content(pathname):
         
 
 if __name__ == '__main__':
-    app.run_server(host='0.0.0.0', debug=True)
+    #app.run_server(host='0.0.0.0', debug=True)
+    app.run_server(debug=True)
