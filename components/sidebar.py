@@ -284,11 +284,9 @@ def save_form_receita(n, descricao, valor, date, switches, categoria, dict_recei
         
         my_budget_db.insert_data('receitas', valor, recebido, fixo, date, categoria, descricao)
         
-        df_receitas = my_budget_db.load_data("receitas").to_dict()
-        
-        return df_receitas
+    df_receitas = my_budget_db.load_data("receitas").to_dict()
     
-    return dict_receitas
+    return df_receitas
 
 # Enviar Form despesa
 @app.callback(
@@ -316,13 +314,10 @@ def save_form_despesa(n, descricao, valor, date, switches, categoria, dict_despe
         fixo = 0 if 2 in switches else 0
         
         my_budget_db.insert_data('despesas', valor, recebido, fixo, date, categoria, descricao)
-        
-        df_despesas = my_budget_db.load_data("despesas").to_dict()
-        
-        return df_despesas
 
-    return dict_despesas
-
+    df_despesas = my_budget_db.load_data("despesas").to_dict()
+    return df_despesas
+    
 # Adicionar/excluir categorias Receitas
 @app.callback(
     [
