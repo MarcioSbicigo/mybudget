@@ -22,18 +22,35 @@ cat_despesa = cat_despesa['nome'].tolist()
 
 # ========= Layout ========= #
 layout = dbc.Col([
-                html.H2("Minhas Finanças", className='text-primary'),
+                #dcc.Link(html.H2("MyBudget", className='text-primary', style={'text-align': 'center'}), href='/'),
+                dcc.Link(html.Img(src='assets/myBudget-logo.png', className='imagem-classe', style={'text-align': 'center'}), href='/'),
                 html.Hr(),
     
     # Seção de Perfil
-                dbc.Button(id='botao_avatar',
-                           children=[html.Img(src='/assets/img_hom.png', id='avatar_change', alt='Avatar', className='perfil_avatar')
-                                     ], style={'background-color': 'transparent', 'border-color': 'transparent'}),
-    
-    # Seção Lançamento de Receitas/Despesas
                 dbc.Row([
-                    dbc.Col([dbc.Button(color='success', id='open-novo-receita', children=['+ Receita'])], width=6),
-                    dbc.Col([dbc.Button(color='danger', id='open-novo-despesa', children=['- Despesa'])], width=6)
+                    dbc.Col([
+                        dbc.Button(id='botao_avatar', 
+                                children=[html.Img(src='/assets/img_hom.png', id='avatar_change', alt='Avatar', className='perfil_avatar')], 
+                                style={'background-color': 'transparent', 'border-color': 'transparent'})
+                        ], className='d-flex justify-content-center') 
+                    ]),
+                                
+    # Seção de Navegação
+                html.Hr(),
+                
+                dbc.Nav(
+                    [
+                        dbc.NavLink("Dashboard", href="/dashboard", active="exact"),
+                        dbc.NavLink("Extratos de Receitas", href="/extratos-receitas", active="exact"),
+                        dbc.NavLink("Extratos de Despesas", href="/extratos-despesas", active="exact"),
+                    ], vertical=True, pills=True, id='nav_buttons'),
+                
+                html.Hr(style={"margin-bottom": "20px"}),
+                
+# Seção Lançamento de Receitas/Despesas
+                dbc.Row([
+                    dbc.Col([dbc.Button(color='success', id='open-novo-receita', children=['+ Receita'])], width=6, className='d-flex justify-content-center'),
+                    dbc.Col([dbc.Button(color='danger', id='open-novo-despesa', children=['- Despesa'])], width=6, className='d-flex justify-content-center')
                 ]),
                 
                 # Modal Receita
@@ -126,7 +143,6 @@ layout = dbc.Col([
                           backdrop=True
                           ),
 
-
                 # Modal Despesa
                 dbc.Modal([
                     dbc.ModalHeader(dbc.ModalTitle('Adicionar despesa')),
@@ -215,17 +231,7 @@ layout = dbc.Col([
                           is_open=False,
                           centered=True,
                           backdrop=True
-                          ),
-                                
-    # Seção de Navegação
-                html.Hr(),
-                
-                dbc.Nav(
-                    [
-                        dbc.NavLink("Dashboard", href="/dashboard", active="exact"),
-                        dbc.NavLink("Extratos de Receitas", href="/extratos-receitas", active="exact"),
-                        dbc.NavLink("Extratos de Despesas", href="/extratos-despesas", active="exact"),
-                    ], vertical=True, pills=True, id='nav_buttons', style={"margin-bottom": "50px"}),
+                          )
                 
                 #ThemeChangerAIO(aio_id="theme", radio_props={"value":dbc.themes.QUARTZ})       
 ], id='sidebar_completa')

@@ -39,6 +39,8 @@ app.layout = dbc.Container(children=[
 
 ], fluid=True, style={"padding": "0px"}, className="dbc")
 
+app.title = "Home - myBudget"
+
 @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
 def render_page_content(pathname):
     if pathname == "/" or pathname == "/dashboard":
@@ -49,9 +51,6 @@ def render_page_content(pathname):
     
     if pathname == "/extratos-despesas":
         return extratosDespesas.layout
-
-if __name__ == '__main__':
-    app.run_server(debug=True)
 
 if __name__ == '__main__':
     #app.run_server(host='0.0.0.0', debug=True)
