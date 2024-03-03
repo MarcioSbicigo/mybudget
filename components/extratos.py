@@ -14,12 +14,7 @@ graph_margin = dict(l=25, r=25, t=25, b=0)
 
 # =========  Layout  =========== #
 layout = dbc.Col([
-    
     dbc.Row([
-        dbc.Col([
-            dcc.Graph(id='bar-graph', style={'margin-right': '20px'})
-        ], width = 9),
-        
         dbc.Col([
             dbc.Card(
                 dbc.CardBody([
@@ -28,12 +23,31 @@ layout = dbc.Col([
                     
                 ], style={'text-alighn': 'center', 'padding-top': '30px'})
             )
-        ], width=3)
-    ]), 
-    dbc.Row([
-        html.Legend('Tabela de Despesas'),
-        html.Div(id='tabela-despesas', className='dbc')
+        ], width=12)
     ]),
+    dbc.Row([
+        #html.Legend('Tabela de Despesas'),
+        html.Div(id='tabela-despesas', className='dbc',style={"margin-top": "10px"})
+    ]),
+    dbc.Row([
+        dbc.Col([
+            dcc.Graph(id='bar-graph', style={'margin-right': '20px'})
+        ], width = 12)
+    ])
+    
+                    # #Datepicker de análise por período
+                    # html.Legend("Período de Análise", style={"margin-top": "10px"}),
+                    # dcc.DatePickerRange(
+                    #     month_format='Do MMM, YY',
+                    #     end_date_placeholder_text='Data...',
+                    #     start_date=start_date,
+                    #     end_date=end_date,
+                    #     display_format='DD-MM-YYYY',
+                    #     with_portal=True,
+                    #     updatemode='singledate',
+                    #     id='date-picker-config',
+                    #     style={'z-index': '100'})
+                    # #start_date = datetime(data_atual.year, data_atual.month, 1)
     
 ], style={'padding': '10px'})
 
@@ -65,7 +79,7 @@ def imprimir_tabela (data):
         id='datatable-interactivity',
         
         columns=[
-            {"name": i, "id": i, "deletable": False, "selectable": False, "hideable": True} for i in ordem_colunas
+            {"name": i, "id": i, "deletable": False, "selectable": False, "hideable": False} for i in ordem_colunas
         ],
 
         data=df.to_dict('records'),
@@ -95,7 +109,7 @@ def bar_chart(data):
     graph = px.bar(df_grouped, x='Categoria', y='Valor', title="Despesas Gerais")
     
     #graph.update_layout(template=template_from_url(theme))
-    graph.update_layout(margin=graph_margin, height=410)
+    graph.update_layout(margin=graph_margin, height=290)
     graph.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
     
     return graph

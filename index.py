@@ -8,7 +8,7 @@ import plotly.express as px
 
 from app import *
 from myBudgetDB import *
-from components import dashboards, extratos, sidebar
+from components import dashboard, extratos, sidebar
 
 my_budget_db = MyBudgetDatabase()
 
@@ -41,8 +41,8 @@ app.layout = dbc.Container(children=[
 
 @app.callback(Output("page-content", "children"), [Input("url", "pathname")])
 def render_page_content(pathname):
-    if pathname == "/" or pathname == "/dashboards":
-        return dashboards.layout
+    if pathname == "/" or pathname == "/dashboard":
+        return dashboard.layout
 
     if pathname == "/extratos":
         return extratos.layout

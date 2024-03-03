@@ -38,7 +38,7 @@ layout = dbc.Col([
         dbc.Col([
                 dbc.CardGroup([
                         dbc.Card([
-                                html.Legend("Receita"),
+                                html.Legend("Receitas"),
                                 html.H5("R$ -", id="p-receita-dashboards"),
                         ], style={"padding-left": "20px", "padding-top": "10px"}),
                         dbc.Card(
@@ -228,7 +228,7 @@ def update_output(data_despesa, data_receita, despesa, receita):
     fig.add_trace(go.Scatter(name='Fluxo de caixa', x=df_acum.index, y=df_acum['Acum'], mode='lines'))
     
     
-    fig.update_layout(margin=graph_margin, height=350)
+    fig.update_layout(margin=graph_margin, title='Receitas x Despesas', height=350)
     fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
     
     return fig
@@ -264,9 +264,10 @@ def graph2_show(data_receita, data_despesa, receita, despesa, start_date, end_da
     df_final = df_final[(df_final['Data'] >= start_date) & (df_final['Data'] <= end_date)]
     df_final = df_final[(df_final['Categoria'].isin(receita) | (df_final['Categoria'].isin(despesa)))]
     
-    fig = px.bar(df_final, x="Data", y="Valor", color='Output', barmode="group")
+    fig = px.bar(df_final, x="Data", y="Valor", color='Output', barmode="group", title="Receitas e Despesas por período")
     
     fig.update_layout(margin=graph_margin, height=350)
+    fig.update_layout(legend_title_text = "Legenda")
     fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
     
     return fig
@@ -286,8 +287,9 @@ def pie_receita(data_receita, receita):
     df = df[df['Categoria'].isin(receita)]
 
     fig = px.pie(df, values=df.Valor, names=df.Categoria, hole=.2)
-    fig.update_layout(title={'text': "Receitas"})
+    fig.update_layout(title={'text': "Receitas por categoria (%)"})
     fig.update_layout(margin=graph_margin, height=350)
+    fig.update_layout(legend_title_text = "Legenda")
     fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
                   
     return fig  
@@ -306,9 +308,10 @@ def pie_despesa(data_despesa, despesa):
     df = df[df['Categoria'].isin(despesa)]
 
     fig = px.pie(df, values=df.Valor, names=df.Categoria, hole=.2)
-    fig.update_layout(title={'text': "Despesas"})
+    fig.update_layout(title={'text': "Despesas por categoria (%)"})
 
     fig.update_layout(margin=graph_margin, height=350)
+    fig.update_layout(legend_title_text = "Legenda")
     fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
 
     return fig
