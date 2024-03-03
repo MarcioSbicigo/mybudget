@@ -31,24 +31,9 @@ layout = dbc.Col([
     ]),
     dbc.Row([
         dbc.Col([
-            dcc.Graph(id='bar-graph', style={'margin-right': '20px'})
+            dcc.Graph(id='bar-graph-despesas', style={'margin-right': '20px'})
         ], width = 12)
     ])
-    
-                    # #Datepicker de análise por período
-                    # html.Legend("Período de Análise", style={"margin-top": "10px"}),
-                    # dcc.DatePickerRange(
-                    #     month_format='Do MMM, YY',
-                    #     end_date_placeholder_text='Data...',
-                    #     start_date=start_date,
-                    #     end_date=end_date,
-                    #     display_format='DD-MM-YYYY',
-                    #     with_portal=True,
-                    #     updatemode='singledate',
-                    #     id='date-picker-config',
-                    #     style={'z-index': '100'})
-                    # #start_date = datetime(data_atual.year, data_atual.month, 1)
-    
 ], style={'padding': '10px'})
 
 # =========  Callbacks  =========== #
@@ -97,7 +82,7 @@ def imprimir_tabela (data):
 
 # Bar Graph            
 @app.callback(
-    Output('bar-graph', 'figure'),
+    Output('bar-graph-despesas', 'figure'),
     [Input('store-despesas', 'data')
     #Input(ThemeChangerAIO.ids.radio("theme"), "value")
     ]

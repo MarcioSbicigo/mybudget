@@ -12,10 +12,6 @@ import pandas as pd
 
 from myBudgetDB import *
 
-# my_budget_db = MyBudgetDatabase()
-# df_despesas = my_budget_db.load_data("despesas")
-# df_receitas = my_budget_db.load_data("receitas")
-
 my_budget_db = MyBudgetDatabase()
 
 cat_receita = my_budget_db.load_categories("categorias_receita")
@@ -226,13 +222,12 @@ layout = dbc.Col([
                 
                 dbc.Nav(
                     [
-                        dbc.NavLink("Dashboard", href="/dashboards", active="exact"),
-                        dbc.NavLink("Extratos", href="/extratos", active="exact"),
+                        dbc.NavLink("Dashboard", href="/dashboard", active="exact"),
+                        dbc.NavLink("Extratos de Receitas", href="/extratos-receitas", active="exact"),
+                        dbc.NavLink("Extratos de Despesas", href="/extratos-despesas", active="exact"),
                     ], vertical=True, pills=True, id='nav_buttons', style={"margin-bottom": "50px"}),
                 
-                #ThemeChangerAIO(aio_id="theme", radio_props={"value":dbc.themes.QUARTZ})
-    
-            
+                #ThemeChangerAIO(aio_id="theme", radio_props={"value":dbc.themes.QUARTZ})       
 ], id='sidebar_completa')
 
 # =========  Callbacks  =========== #

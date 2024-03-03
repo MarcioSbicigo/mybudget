@@ -8,7 +8,7 @@ import plotly.express as px
 
 from app import *
 from myBudgetDB import *
-from components import dashboard, extratos, sidebar
+from components import dashboard, extratosReceitas, extratosDespesas, sidebar
 
 my_budget_db = MyBudgetDatabase()
 
@@ -44,8 +44,11 @@ def render_page_content(pathname):
     if pathname == "/" or pathname == "/dashboard":
         return dashboard.layout
 
-    if pathname == "/extratos":
-        return extratos.layout
+    if pathname == "/extratos-receitas":
+        return extratosReceitas.layout
+    
+    if pathname == "/extratos-despesas":
+        return extratosDespesas.layout
 
 if __name__ == '__main__':
     app.run_server(debug=True)
