@@ -21,7 +21,7 @@ layout = dbc.Col([
                     html.H4('Total de receitas', style={'text-align': 'center'}),
                     html.Legend('R$ -', id='valor_receita_card', style={'font-size': '60px', 'text-align': 'center'})
                     
-                ], style={'text-alighn': 'center', 'padding-top': '30px'})
+                ], style={'text-align': 'center', 'padding-top': '30px'})
             )
         ], width=12)
     ]),
