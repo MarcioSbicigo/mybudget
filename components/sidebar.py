@@ -22,18 +22,28 @@ cat_despesa = cat_despesa['nome'].tolist()
 
 # ========= Layout ========= #
 layout = dbc.Col([
-                #dcc.Link(html.H2("MyBudget", className='text-primary', style={'text-align': 'center'}), href='/'),
-                dcc.Link(html.Img(src='assets/myBudget-logo.png', className='imagem-classe', style={'text-align': 'center'}), href='/'),
-                html.Hr(),
+    dcc.Link(html.Img(src='assets/myBudget-logo.png', className='imagem-classe', style={'text-align': 'center'}), href='/'),
     
-    # Seção de Perfil
-                dbc.Row([
-                    dbc.Col([
-                        dbc.Button(id='botao_avatar', 
-                                children=[html.Img(src='/assets/img_hom.png', id='avatar_change', alt='Avatar', className='perfil_avatar')], 
-                                style={'background-color': 'transparent', 'border-color': 'transparent'})
-                        ], className='d-flex justify-content-center') 
-                    ]),
+    html.Hr(), 
+    
+    dbc.Row([
+        html.Img(src="/assets/img_hom.png", id="avatar_change", alt="Avatar", className='perfil_avatar')
+    ]),
+    
+    html.Div([
+        dcc.Upload(
+            id='upload-image',
+            children=html.Div([
+                html.A('Alterar imagem')
+            ]),
+             style={
+                 'textAlign': 'center',
+                 'text-decoration': 'underline'
+             },
+            multiple=False
+        ),
+    ]),
+
                                 
     # Seção de Navegação
                 html.Hr(),
@@ -410,3 +420,31 @@ def add_category_despesa(n, n2, txt, check_delete, data):
     data_return = df_cat_despesa.to_dict()
     
     return [opt_despesa, opt_despesa, [], data_return]
+
+# Callback para abrir a janela de seleção de arquivo ao clicar no botão
+@app.callback(Output('upload-image', 'style'),
+              [Input('upload-button', 'n_clicks')])
+def display_upload(n_clicks):
+    if n_clicks is not None:
+        return {'display': 'block'}
+    else:
+        return {'display': 'none'}
+
+# Callback para exibir a imagem carregada
+@app.callback(Output('uploaded-image', 'src'),
+              [Input('upload-image', 'contents')])
+def update_image(content):
+    if content is not None:
+        return content
+    else:
+        return '/assets/img_hom.png'
+    
+# Pop-up perfis
+@app.callback(
+    Output("modal-perfil", "is_open"),
+    Input("botao_avatar", "n_clicks"),
+    State("modal-perfil", "is_open")
+)
+def toggle_modal(n1, is_open):
+    if n1:
+        return not is_open
