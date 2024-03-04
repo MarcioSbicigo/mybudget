@@ -14,21 +14,22 @@ graph_margin = dict(l=25, r=25, t=25, b=0)
 
 # =========  Layout  =========== #
 layout = dbc.Col([
+    
     dbc.Row([
         dbc.Col([
             dbc.Card(
                 dbc.CardBody([
                     html.H4('Total de despesas', style={'text-align': 'center'}),
                     html.Legend('R$ -', id='valor_despesa_card', style={'font-size': '60px', 'text-align': 'center'})
-                    
                 ], style={'text-alighn': 'center', 'padding-top': '30px'})
             )
         ], width=12)
     ]),
+    
     dbc.Row([
-        #html.Legend('Tabela de Despesas'),
         html.Div(id='tabela-despesas', className='dbc',style={"margin-top": "10px"})
     ]),
+    
     dbc.Row([
         dbc.Col([
             dcc.Graph(id='bar-graph-despesas', style={'margin-right': '20px'})

@@ -14,6 +14,7 @@ graph_margin = dict(l=25, r=25, t=25, b=0)
 
 # =========  Layout  =========== #
 layout = dbc.Col([
+    
     dbc.Row([
         dbc.Col([
             dbc.Card(
@@ -25,10 +26,11 @@ layout = dbc.Col([
             )
         ], width=12)
     ]),
+    
     dbc.Row([
-        #html.Legend('Tabela de Receitas'),
         html.Div(id='tabela-receitas', className='dbc',style={"margin-top": "10px"})
     ]),
+    
     dbc.Row([
         dbc.Col([
             dcc.Graph(id='bar-graph-receitas', style={'margin-right': '20px'})

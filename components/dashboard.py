@@ -33,95 +33,92 @@ else:
 # =========  Layout  =========== #
 layout = dbc.Col([
     dbc.Row([
-
         # Receita
         dbc.Col([
-                dbc.CardGroup([
-                        dbc.Card([
-                                html.Legend("Receitas"),
-                                html.H5("R$ -", id="p-receita-dashboards"),
-                        ], style={"padding-left": "20px", "padding-top": "10px"}),
-                        dbc.Card(
-                            html.Div(className="fa fa-smile-o", style=card_icon), 
-                            color="success",
-                            style={"maxWidth": 75, "height": 100, "margin-left": "-10px"},
-                        )])
-                ], width=4),
-
+            dbc.CardGroup([
+                dbc.Card([
+                    html.Legend("Receitas"),
+                    html.H5("R$ -", id="p-receita-dashboards"),
+                    ], style={"padding-left": "20px", "padding-top": "10px"}),
+                dbc.Card(
+                    html.Div(className="fa fa-smile-o", style=card_icon), 
+                    color="success",
+                    style={"maxWidth": 75, "height": 100, "margin-left": "-10px"},
+                    )])
+            ], width=4),
+        
         # Despesa
         dbc.Col([
             dbc.CardGroup([
                 dbc.Card([
                     html.Legend("Despesas"),
                     html.H5("R$ -", id="p-despesa-dashboards"),
-                ], style={"padding-left": "20px", "padding-top": "10px"}),
+                    ], style={"padding-left": "20px", "padding-top": "10px"}),
                 dbc.Card(
                     html.Div(className="fa fa-meh-o", style=card_icon), 
                     color="danger",
                     style={"maxWidth": 75, "height": 100, "margin-left": "-10px"},
-                )])
+                    )])
             ], width=4),
         
         # Saldo Total
         dbc.Col([
-                dbc.CardGroup([
-                        dbc.Card([
-                                html.Legend("Saldo"),
-                                html.H5("R$ -", id="p-saldo-dashboards", style={}),
-                        ], style={"padding-left": "20px", "padding-top": "10px"}),
-                        dbc.Card(
-                            html.Div(className="fa fa-university", style=card_icon), 
-                            color="warning",
-                            style={"maxWidth": 75, "height": 100, "margin-left": "-10px"},
-                        )])
-                ], width=4)
-    ], style={"margin": "10px"}),
+            dbc.CardGroup([
+                dbc.Card([
+                    html.Legend("Saldo"),
+                    html.H5("R$ -", id="p-saldo-dashboards", style={}),
+                    ], style={"padding-left": "20px", "padding-top": "10px"}),
+                dbc.Card(
+                    html.Div(className="fa fa-university", style=card_icon), 
+                    color="warning",
+                    style={"maxWidth": 75, "height": 100, "margin-left": "-10px"},
+                    )])
+            ], width=4)
+        ], style={"margin": "10px"}),
     
     #Seção FILTRAR LANÇLAMENTOS
     dbc.Row([
         dbc.Col([
             dbc.Card([
-                    html.Legend("Filtrar lançamentos", className="card-title"),
-                    
-                    #Categorias das Receitas
-                    html.Label("Categorias das receitas"),
-                    html.Div(
-                        dcc.Dropdown(
+                html.Legend("Filtrar lançamentos", className="card-title"),
+                
+                #Categorias das Receitas
+                html.Label("Categorias das receitas"),
+                html.Div(
+                    dcc.Dropdown(
                         id="dropdown-receita",
                         clearable=False,
                         style={"width": "100%"},
                         persistence=True,
                         persistence_type="session",
-                        multi=True)                       
+                        multi=True)
                     ),
-                        
-                    #Categorias das Despesas
-                    html.Label("Categorias das despesas", style={"margin-top": "10px"}),
-                    dcc.Dropdown(
-                        id="dropdown-despesa",
-                        clearable=False,
-                        style={"width": "100%"},
-                        persistence=True,
-                        persistence_type="session",
-                        multi=True
-                    ),
-                    
-                    #Datepicker de análise por período
-                    html.Legend("Período de Análise", style={"margin-top": "10px"}),
-                    dcc.DatePickerRange(
-                        month_format='Do MMM, YY',
-                        end_date_placeholder_text='Data...',
-                        start_date=start_date,
-                        end_date=end_date,
-                        display_format='DD-MM-YYYY',
-                        with_portal=True,
-                        updatemode='singledate',
-                        id='date-picker-config',
-                        style={'z-index': '100'})
-                    #start_date = datetime(data_atual.year, data_atual.month, 1)
-                    
-            ], style={"height": "100%", "padding": "20px"}),
                 
+                #Categorias das Despesas
+                html.Label("Categorias das despesas", style={"margin-top": "10px"}),
+                dcc.Dropdown(
+                    id="dropdown-despesa",
+                    clearable=False,
+                    style={"width": "100%"},
+                    persistence=True,
+                    persistence_type="session",
+                    multi=True
+                    ),
+                
+                #Datepicker de análise por período
+                html.Legend("Período de Análise", style={"margin-top": "10px"}),
+                dcc.DatePickerRange(
+                    month_format='Do MMM, YY',
+                    end_date_placeholder_text='Data...',
+                    start_date=start_date,
+                    end_date=end_date,
+                    display_format='DD-MM-YYYY',
+                    with_portal=True,
+                    updatemode='singledate',
+                    id='date-picker-config',
+                    style={'z-index': '100'})
+            ], style={"height": "100%", "padding": "20px"}),
+            
         ], width=4),
         
         dbc.Col(dbc.Card(dcc.Graph(id="graph1"), style={"height": "100%", "padding": "10px"}), width=8),
