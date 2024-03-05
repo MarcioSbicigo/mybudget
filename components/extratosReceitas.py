@@ -7,7 +7,7 @@ from dash import html
 import dash_bootstrap_components as dbc
 import plotly.express as px
 import pandas as pd
-
+from dash_bootstrap_templates import template_from_url, ThemeChangerAIO
 from app import app
 
 graph_margin = dict(l=25, r=25, t=25, b=0)
@@ -85,18 +85,18 @@ def imprimir_tabela (data):
 # Bar Graph            
 @app.callback(
     Output('bar-graph-receitas', 'figure'),
-    [Input('store-receitas', 'data')
-    #Input(ThemeChangerAIO.ids.radio("theme"), "value")
+    [Input('store-receitas', 'data'),
+    Input(ThemeChangerAIO.ids.radio("theme"), "value")
     ]
 )
-def bar_chart(data):
+def bar_chart(data, theme):
     df = pd.DataFrame(data)   
     df_grouped = df.groupby("Categoria").sum()[["Valor"]].reset_index()
     
     graph = px.bar(df_grouped, x='Categoria', y='Valor')
     
-    #graph.update_layout(template=template_from_url(theme))
     graph.update_layout(margin=graph_margin, height=290)
+    graph.update_layout(template=template_from_url(theme))
     graph.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
     
     return graph

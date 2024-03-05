@@ -3,10 +3,9 @@ from dash.dependencies import Input, Output
 from datetime import datetime, timedelta
 import dash_bootstrap_components as dbc
 import pandas as pd
-#import numpy as np
+from dash_bootstrap_templates import template_from_url, ThemeChangerAIO
 import plotly.express as px
 import plotly.graph_objects as go
-#import calendar
 
 from myBudgetDB import *
 from app import app
@@ -204,11 +203,11 @@ def saldo_total(despesas, receitas):
         Input('store-despesas', 'data'),
         Input('store-receitas', 'data'),
         Input("dropdown-despesa", "value"),
-        Input("dropdown-receita", "value")
-        # Input(ThemeChangerAIO.ids.radio("theme"), "value")
+        Input("dropdown-receita", "value"),
+        Input(ThemeChangerAIO.ids.radio("theme"), "value")
     ]
 )
-def update_output(data_despesa, data_receita, despesa, receita):
+def update_output(data_despesa, data_receita, despesa, receita, theme):
     df_despesas = pd.DataFrame(data_despesa).set_index('Data')[['Valor']]
     df_ds = df_despesas.groupby('Data').sum().rename(columns={'Valor': 'Despesa'})
     
@@ -226,6 +225,7 @@ def update_output(data_despesa, data_receita, despesa, receita):
     
     
     fig.update_layout(margin=graph_margin, title='Receitas x Despesas', height=350)
+    fig.update_layout(margin=graph_margin, template=template_from_url(theme))
     fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
     
     return fig
@@ -241,11 +241,11 @@ def update_output(data_despesa, data_receita, despesa, receita):
         Input('dropdown-receita', 'value'),
         Input('dropdown-despesa', 'value'),
         Input('date-picker-config', 'start_date'),
-        Input('date-picker-config', 'end_date')
-        #Input(ThemeChangerAIO.ids.radio("theme"), "value")
+        Input('date-picker-config', 'end_date'),
+        Input(ThemeChangerAIO.ids.radio("theme"), "value")
     ]   
 )
-def graph2_show(data_receita, data_despesa, receita, despesa, start_date, end_date):
+def graph2_show(data_receita, data_despesa, receita, despesa, start_date, end_date, theme):
     df_rc = pd.DataFrame(data_receita)
     df_ds = pd.DataFrame(data_despesa)
     
@@ -261,10 +261,11 @@ def graph2_show(data_receita, data_despesa, receita, despesa, start_date, end_da
     df_final = df_final[(df_final['Data'] >= start_date) & (df_final['Data'] <= end_date)]
     df_final = df_final[(df_final['Categoria'].isin(receita) | (df_final['Categoria'].isin(despesa)))]
     
-    fig = px.bar(df_final, x="Data", y="Valor", color='Output', barmode="group", title="Receitas e Despesas por período")
+    fig = px.bar(df_final, x="Data", y="Valor", color='Output', barmode="group", title="Receitas e Despesas por período", color_discrete_map={'Receitas': '#27c451', 'Despesas': '#d12828'})
     
     fig.update_layout(margin=graph_margin, height=350)
     fig.update_layout(legend_title_text = "Legenda")
+    fig.update_layout(margin=graph_margin, template=template_from_url(theme))
     fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
     
     return fig
@@ -275,18 +276,20 @@ def graph2_show(data_receita, data_despesa, receita, despesa, start_date, end_da
     
     [
         Input('store-receitas', 'data'),
-        Input('dropdown-receita', 'value')
-        #Input(ThemeChangerAIO.ids.radio("theme"), "value")
+        Input('dropdown-receita', 'value'),
+        Input(ThemeChangerAIO.ids.radio("theme"), "value")
     ]
 )
-def pie_receita(data_receita, receita):
+def pie_receita(data_receita, receita, theme):
     df = pd.DataFrame(data_receita)
     df = df[df['Categoria'].isin(receita)]
 
     fig = px.pie(df, values=df.Valor, names=df.Categoria, hole=.2)
+    
     fig.update_layout(title={'text': "Receitas por categoria (%)"})
     fig.update_layout(margin=graph_margin, height=350)
     fig.update_layout(legend_title_text = "Legenda")
+    fig.update_layout(margin=graph_margin, template=template_from_url(theme))
     fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
                   
     return fig  
@@ -296,19 +299,20 @@ def pie_receita(data_receita, receita):
     Output('graph4', "figure"),
     [
         Input('store-despesas', 'data'),
-        Input('dropdown-despesa', 'value')
-        #Input(ThemeChangerAIO.ids.radio("theme"), "value")
+        Input('dropdown-despesa', 'value'),
+        Input(ThemeChangerAIO.ids.radio("theme"), "value")
     ]
 )
-def pie_despesa(data_despesa, despesa):
+def pie_despesa(data_despesa, despesa, theme):
     df = pd.DataFrame(data_despesa)
     df = df[df['Categoria'].isin(despesa)]
 
     fig = px.pie(df, values=df.Valor, names=df.Categoria, hole=.2)
+    
     fig.update_layout(title={'text': "Despesas por categoria (%)"})
-
     fig.update_layout(margin=graph_margin, height=350)
     fig.update_layout(legend_title_text = "Legenda")
+    fig.update_layout(margin=graph_margin, template=template_from_url(theme))
     fig.update_layout(paper_bgcolor='rgba(0,0,0,0)', plot_bgcolor='rgba(0,0,0,0)')
 
     return fig
