@@ -1,10 +1,35 @@
-version: '3.4'
+version: '3.8'
 
 services:
-  mybudget:
-    image: mybudget
+  mongodb:
+    image: mongo:latest
+    container_name: mongodb
+    ports:
+      - "27018:27017"
+    volumes:
+      - mongodb_data:/data/myBudgetDB
+    networks:
+      - mybudget-network
+
+  myBudget:
+    image: mybudget:dev
     build:
       context: .
       dockerfile: ./Dockerfile
+    container_name: myBudget
     ports:
-      - 8080:8080
+      - "8050:8050"
+    depends_on:
+      - mongodb
+    environment:
+      MONGO_URL: "mongodb://mongodb:27017/"
+    networks:
+      - mybudget-network
+
+networks:
+  mybudget-network:
+    driver: bridge
+
+volumes:
+  mongodb_data:
+    driver: local

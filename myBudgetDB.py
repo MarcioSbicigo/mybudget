@@ -3,7 +3,8 @@ from pymongo import MongoClient
 import pandas as pd
 
 class MyBudgetDatabase:
-    def __init__(self, mongo_url='mongodb://localhost:27017/', database_name='myBudget'):
+    def __init__(self, mongo_url='mongodb://localhost:27017/', database_name='myBudget'): # For local
+    #def __init__(self, mongo_url='mongodb://mongodb:27017/', database_name='myBudget'): # For Docker
         self.mongo_url = mongo_url
         self.database_name = database_name
         self.client = MongoClient(self.mongo_url)
