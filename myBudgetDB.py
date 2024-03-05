@@ -96,32 +96,27 @@ class MyBudgetDatabase:
 
     # Função que cria as collections de categorias de receitas/despesas
     # Recebe o nome da collection como parâmetro
-    def init_categories(self, collection):
-
-        if collection == 'categorias_receita':
-            list_categories = ["Salário", "Rendimentos", "Vendas", "Cashback"]
-        elif collection == 'categorias_despesa':
-            list_categories = ["Alimentação", "Aluguel", "Água", "Luz", "Combustível", "Saúde", "Lazer"]
-
-        # Criando a collection de categorias de receita/despesa
-            try:
-                # Populando categorias iniciais de despesas
-                if self.db[collection].count_documents({}) == 0:
-                    
-                    for categoria in list_categories:
-                        # Verificando se a categoria já existe na coleção
-                        if self.db[collection].count_documents({'nome': categoria}) == 0:
-                            cat = {
-                                'nome': categoria
+    def init_categories(self, collection, categories):
+        list_categories = categories
+        
+        # Criando a collection de categorias de receita ou despesa
+        try:
+            if self.db[collection].count_documents({}) == 0:
+                
+                for categoria in list_categories:
+                    # Verificando se a categoria já existe na coleção
+                    if self.db[collection].count_documents({'nome': categoria}) == 0:
+                        cat = {
+                            'nome': categoria
                             }
-                            self.db[collection].insert_one(cat)
-                            
-                    self.insert_log(f'Collection {collection} foi criada.', 'log_aplicacao')
-                    print(f'Collection {collection} foi criada.\n')
-            
-            except Exception as error:
-                self.insert_log(f'Erro ao criar a collection {collection}: {error}', 'log_errors')
-                print(f'Erro ao criar a collection {collection}: {error}')
+                        self.db[collection].insert_one(cat)
+                        
+                        self.insert_log(f'Collection {collection} criada.', 'log_aplicacao')
+                        
+                print(f'Collection {collection} criada.\n')               
+        except Exception as error:
+            self.insert_log(f'Erro ao criar a collection {collection}: {error}', 'log_errors')
+            print(f'Erro ao criar a collection {collection}: {error}')
     
     # Função que cria as collections de receitas/despesas
     # Recebe o nome da collection como parâmetro
@@ -136,9 +131,26 @@ class MyBudgetDatabase:
             # Salvando o DataFrame de despesas no MongoDB
             self.db[collection].insert_many(df_receitas_despesas.to_dict('records'))
                     
-            self.insert_log(f'Coleção de {collection} criada.', 'log_aplicacao')
-            print(f'Coleção de {collection} criada.')
+            self.insert_log(f'Collection {collection} criada.', 'log_aplicacao')
+            print(f'Collection {collection} criada.\n')
                 
         except Exception as error:
             self.insert_log(f'Erro ao criar collection de {collection}: {error}', 'log_errors')
             print(f'Erro ao criar collection de {collection}: {error}')
+            
+my_budget_db = MyBudgetDatabase()
+
+# Criando collections no MongoDB
+if my_budget_db.db['receitas'].count_documents({}) == 0:
+    my_budget_db.init_receitas_despesas('receitas')
+    
+if my_budget_db.db['despesas'].count_documents({}) == 0:
+    my_budget_db.init_receitas_despesas('despesas')
+
+if my_budget_db.db['categorias_receita'].count_documents({}) == 0:
+    lista_categorias_receitas = ["Salário", "Rendimentos", "Vendas", "Cashback"]
+    my_budget_db.init_categories('categorias_receita', lista_categorias_receitas)
+    
+if my_budget_db.db['categorias_despesa'].count_documents({}) == 0:
+    lista_categorias_despesas = ["Alimentação", "Aluguel", "Água", "Luz", "Combustível", "Saúde", "Lazer"]
+    my_budget_db.init_categories('categorias_despesa', lista_categorias_despesas)

@@ -93,7 +93,7 @@ def bar_chart(data):
     df = pd.DataFrame(data)   
     df_grouped = df.groupby("Categoria").sum()[["Valor"]].reset_index()
     
-    graph = px.bar(df_grouped, x='Categoria', y='Valor', title="Receitas Gerais")
+    graph = px.bar(df_grouped, x='Categoria', y='Valor')
     
     #graph.update_layout(template=template_from_url(theme))
     graph.update_layout(margin=graph_margin, height=290)

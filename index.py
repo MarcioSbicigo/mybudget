@@ -1,17 +1,14 @@
+from myBudgetDB import *
 from dash import html, dcc
 import dash
 from dash.dependencies import Input, Output
-
 import dash_bootstrap_components as dbc
 import pandas as pd
 import plotly.express as px
-
 from app import *
-from myBudgetDB import *
 from components import dashboard, extratosReceitas, extratosDespesas, sidebar
 
-my_budget_db = MyBudgetDatabase()
-
+# Carregando receitas, despesas e categorias de receitas/despesas
 df_receitas  = my_budget_db.load_data("receitas")
 df_despesas  = my_budget_db.load_data("despesas")
 cat_receitas = my_budget_db.load_categories("categorias_receita")
