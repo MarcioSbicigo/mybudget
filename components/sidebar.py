@@ -4,7 +4,7 @@ from dash import html, dcc
 from dash.dependencies import Input, Output, State
 import dash_bootstrap_components as dbc
 from app import app
-
+from dash_bootstrap_templates import ThemeChangerAIO
 from datetime import datetime, date
 import plotly.express as px
 import numpy as np
@@ -251,9 +251,11 @@ layout = dbc.Col([
               is_open=False,
               centered=True,
               backdrop=True
-              )
+              ),
+    # Separador
+    html.Hr(style={'margin-bottom': '200px'}), 
     
-    #ThemeChangerAIO(aio_id="theme", radio_props={"value":dbc.themes.QUARTZ})       
+    ThemeChangerAIO(aio_id="theme", radio_props={"value":dbc.themes.QUARTZ})       
 ], id='sidebar_completa')
 
 # =========  Callbacks  =========== #
@@ -354,7 +356,8 @@ def save_form_despesa(n, descricao, valor, date, switches, categoria, dict_despe
         Output('select_receita', 'options'),
         Output('checklist-selected-style-receita', 'options'),
         Output('checklist-selected-style-receita', 'value'),
-        Output('stored-cat-receitas', 'data')
+        Output('stored-cat-receitas', 'data'),
+        Output('input-add-receita', 'value')
         
     ],
     
@@ -393,7 +396,7 @@ def add_category_receita(n, n2, txt, check_delete, data):
     
     data_return = df_cat_receita.to_dict()
     
-    return [opt_receita, opt_receita, [], data_return]
+    return [opt_receita, opt_receita, [], data_return, '']
 
 # Adicionar/excluir categorias Despesas
 @app.callback(
@@ -401,7 +404,8 @@ def add_category_receita(n, n2, txt, check_delete, data):
         Output('select_despesa', 'options'),
         Output('checklist-selected-style-despesa', 'options'),
         Output('checklist-selected-style-despesa', 'value'),
-        Output('stored-cat-despesas', 'data')
+        Output('stored-cat-despesas', 'data'),
+        Output('input-add-despesa', 'value')
     ],
     
     [
@@ -439,7 +443,7 @@ def add_category_despesa(n, n2, txt, check_delete, data):
     
     data_return = df_cat_despesa.to_dict()
     
-    return [opt_despesa, opt_despesa, [], data_return]
+    return [opt_despesa, opt_despesa, [], data_return, '']
 
 # Callback para abrir a janela de seleção de arquivo ao clicar no botão
 @app.callback(Output('upload-image', 'style'),
