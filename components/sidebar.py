@@ -111,6 +111,7 @@ layout = dbc.Col([
                 
                 ], style={"margin-top": "25px"}),
             
+            # Accordion de categorias receitas
             dbc.Row([
                 dbc.Accordion([
                     dbc.AccordionItem(children=[
@@ -120,13 +121,11 @@ layout = dbc.Col([
                                 
                                 dbc.Input(type="text", placeholder="Nova categoria...", id="input-add-receita", value=""),
                                 
-                                html.Br(),
-                                
                                 dbc.Button("Adicionar", className="btn btn-success", id="add-category-receita", style={"margin-top": "20px"}),
                                 
                                 html.Br(),
                                 
-                                html.Div(id="category-div-add-receita", style={}),
+                                html.Div(id="category-div-add-receita"),
                                 ], width=6),
                             
                             dbc.Col([
@@ -206,6 +205,7 @@ layout = dbc.Col([
                 
                 ], style={"margin-top": "25px"}),
             
+            # Accordion de categorias despesas
             dbc.Row([
                 dbc.Accordion([
                     dbc.AccordionItem(children=[
@@ -280,8 +280,12 @@ def toggle_modal(n1, is_open):
 # Enviar Form receita
 
 @app.callback(
-    Output('store-receitas', 'data'),
-
+    [
+        Output('store-receitas', 'data'),
+        Output("txt-receita", "value"),
+        Output("valor_receita", "value")
+    ],
+    
     Input("salvar_receita", "n_clicks"),
 
     [
@@ -307,11 +311,15 @@ def save_form_receita(n, descricao, valor, date, switches, categoria, dict_recei
         
     df_receitas = my_budget_db.load_data("receitas").to_dict()
     
-    return df_receitas
+    return df_receitas, '', ''
 
 # Enviar Form despesa
 @app.callback(
-    Output('store-despesas', 'data'),
+    [
+        Output('store-despesas', 'data'),
+        Output("txt-despesa", "value"),
+        Output("valor_despesa", "value"),
+    ],
 
     Input("salvar_despesa", "n_clicks"),
 
@@ -337,7 +345,8 @@ def save_form_despesa(n, descricao, valor, date, switches, categoria, dict_despe
         my_budget_db.insert_data('despesas', valor, recebido, fixo, date, categoria, descricao)
 
     df_despesas = my_budget_db.load_data("despesas").to_dict()
-    return df_despesas
+    
+    return df_despesas, '', ''
     
 # Adicionar/excluir categorias Receitas
 @app.callback(
@@ -346,6 +355,7 @@ def save_form_despesa(n, descricao, valor, date, switches, categoria, dict_despe
         Output('checklist-selected-style-receita', 'options'),
         Output('checklist-selected-style-receita', 'value'),
         Output('stored-cat-receitas', 'data')
+        
     ],
     
     [
