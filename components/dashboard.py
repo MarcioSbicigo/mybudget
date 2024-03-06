@@ -12,9 +12,8 @@ from app import app
 
 # Definindo card_icon para padronizar o estilo dos cards 
 card_icon = {
-    'color': 'white',
-    'textAlign': 'center',
-    'fontSize': 30,
+    'width': '55px', 
+    'height': '55px',
     'margin': 'auto'
 }
 
@@ -40,8 +39,8 @@ layout = dbc.Col([
                     html.H5("R$ -", id="p-receita-dashboards"),
                     ], style={"padding-left": "20px", "padding-top": "10px"}),
                 dbc.Card(
-                    html.Div(className="fa fa-smile-o", style=card_icon), 
-                    color="success",
+                    html.Div(html.Img(src='assets/money_up.png', style=card_icon), style={"display": "flex", "align-items": "center", "justify-content": "center", "height": "100%"}),
+                    color="#17ff78",
                     style={"maxWidth": 75, "height": 100, "margin-left": "-10px"},
                     )])
             ], width=4),
@@ -54,8 +53,8 @@ layout = dbc.Col([
                     html.H5("R$ -", id="p-despesa-dashboards"),
                     ], style={"padding-left": "20px", "padding-top": "10px"}),
                 dbc.Card(
-                    html.Div(className="fa fa-meh-o", style=card_icon), 
-                    color="danger",
+                    html.Div(html.Img(src='assets/money_down.png', style=card_icon), style={"display": "flex", "align-items": "center", "justify-content": "center", "height": "100%"}),
+                    color="#ff4942",
                     style={"maxWidth": 75, "height": 100, "margin-left": "-10px"},
                     )])
             ], width=4),
@@ -68,7 +67,7 @@ layout = dbc.Col([
                     html.H5("R$ -", id="p-saldo-dashboards", style={}),
                     ], style={"padding-left": "20px", "padding-top": "10px"}),
                 dbc.Card(
-                    html.Div(className="fa fa-university", style=card_icon), 
+                    html.Div(html.Img(src='assets/money_bank.png', style=card_icon), style={"display": "flex", "align-items": "center", "justify-content": "center", "height": "100%"}),
                     color="warning",
                     style={"maxWidth": 75, "height": 100, "margin-left": "-10px"},
                     )])

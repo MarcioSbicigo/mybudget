@@ -1,10 +1,13 @@
 import datetime
 from pymongo import MongoClient
 import pandas as pd
+import os
+
+#mongodb://localhost:27017/ ou mongodb://mongodb:27017/
 
 class MyBudgetDatabase:
-    def __init__(self, mongo_url='mongodb://localhost:27017/', database_name='myBudget'): # For local
-    #def __init__(self, mongo_url='mongodb://mongodb:27017/', database_name='myBudget'): # For Docker
+    
+    def __init__(self, mongo_url=os.environ.get('MONGO_URL'), database_name='myBudget'):
         self.mongo_url = mongo_url
         self.database_name = database_name
         self.client = MongoClient(self.mongo_url)
